@@ -1,0 +1,242 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Registration</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+
+<script>
+  function validateForm() {
+    var skillsField = document.getElementById("id_skills");
+    var subjectsField = document.getElementById("id_subjects");
+
+    var skillsValue = skillsField.value.trim();
+    var subjectsValue = subjectsField.value;
+
+    if (skillsValue !== "" && subjectsValue === "select") {
+      clearErrorMessage();
+      return true; // Form can be submitted
+    } else if (skillsValue === "" && subjectsValue !== "select") {
+      clearErrorMessage();
+      return true; // Form can be submitted
+    } else if (skillsValue === "" && subjectsValue === "select") {
+      clearErrorMessage();
+      return true; // Form can be submitted
+    } else {
+      displayErrorMessage("Skills and Subjects conflict.");
+      return false; // Form submission prevented
+    }
+  }
+
+  function displayErrorMessage(message) {
+    var errorDiv = document.getElementById("error_message");
+    errorDiv.innerHTML = message;
+  }
+
+  function clearErrorMessage() {
+    var errorDiv = document.getElementById("error_message");
+    errorDiv.innerHTML = "";
+  }
+
+  function clearForm() {
+    var form = document.querySelector("form");
+    form.reset();
+    clearErrorMessage();
+  }
+
+  document.addEventListener("DOMContentLoaded", function() {
+    var form = document.querySelector("form");
+    form.addEventListener("submit", function(event) {
+      if (validateForm()) {
+        // If validation passes, the form will submit normally
+        // Redirect the user to the "result" page
+        window.location.href = '/registration/result'; // Adjust the URL as needed
+      } else {
+        event.preventDefault(); // Prevent form submission if validation fails
+      }
+    });
+
+    var clearButton = document.getElementById("clearButton");
+    clearButton.addEventListener("click", clearForm);
+  });
+</script>
+
+</head>
+<body class="bg-green-500">
+
+<style>
+    body {
+        background-color: black;
+        color: blue;
+        padding: 3px; /* Set the padding to 3px */
+    }
+    
+    .bg-green-500 {
+        background-color: black;
+    }
+    
+    .text-white {
+        color: orange;
+    }
+    
+    .border-gray-300 {
+        border-color: gray;
+    }
+    
+    .focus\\:outline-none:focus {
+        outline: none;
+    }
+    
+    .focus\\:ring-2:focus {
+        box-shadow: none;
+    }
+    
+    .focus\\:ring-blue-500:focus {
+        --tw-ring-color: #00a3ff;
+    }
+    
+    .bg-blue-500 {
+        background-color: #00a3ff;
+    }
+    
+    .text-blue-500 {
+        color: #00a3ff;
+    }
+    
+    .text-2xl {
+        font-size: 1.5rem;
+    }
+    
+    .font-bold {
+        font-weight: bold;
+    }
+    
+    .underline {
+        text-decoration: underline;
+    }
+
+    /* Custom styles */
+    #category-select {
+        color: red;
+        height: 2.25rem; /* Adjust the height as needed */
+    }
+</style>
+
+<div class="container mx-auto p-4">
+    <h2 class="text-2xl text-white">User Registration</h2>
+
+    <h1>
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    </h1>
+    
+    <form method="post" enctype="multipart/form-data" onsubmit="return validateForm();" class="p-4">
+        {% csrf_token %}
+        
+        <label for="id_full_name" class="text-white">Full Name:</label>
+        <input type="text" id="id_full_name" name="full_name" required>
+        
+        <br>
+        
+        <label for="id_email" class="text-white">Email:</label>
+        <input type="email" id="id_email" name="email" required>
+        
+        <br>
+          
+        <label for="id_password" class="text-white">Password:</label>
+        <input type="password" id="id_password" name="password" required>
+        
+        <br>
+        
+        <p class="text-white">Enter your entire address along with pin code.</p>
+        <label for="id_address" class="text-white">Address:</label>
+        <textarea id="id_address" name="address"></textarea>
+        
+        <br>
+        
+        <label for="id_phone_number" class="text-white">Phone Number:</label>
+        <input type="text" id="id_phone_number" name="phone_number">
+        
+        <br>
+        
+        <label for="id_mode" class="mr-2 text-white">Mode:</label>
+        <select id="id_mode" name="mode" class="border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="home">Home</option>
+            <option value="away">Away</option>
+        </select>
+        
+        <p class="text-white">Type your skill name that you want to learn.</p>
+        <label for="id_skills" class="text-white">Skills:</label>
+        <textarea id="id_skills" name="skills"></textarea>
+        
+        <br>
+        
+        <div>
+            <label for="{{ form.select_class.id_for_label }}" class="text-white">Select Class:</label>
+            <select id="{{ form.select_class.id_for_label }}" name="{{ form.select_class.name }}">
+                <option value="" {% if form.select_class.value == "" %}selected{% endif %}>Select a class</option>
+                {% for value, label in form.select_class.field.choices %}
+                    <option value="{{ value }}" {% if form.select_class.value == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <br>
+        
+        <label for="id_subjects" class="text-white">Subjects:</label>
+        <select id="id_subjects" name="subjects">
+            <option value="select">Select any subject that you want to study</option>
+            <option value="hindi">Hindi</option>
+            <option value="english">English</option>
+            <option value="math">Math</option>
+            <option value="science">Science</option>
+            <option value="history">History</option>
+        </select>
+        
+        <p class="text-white">If you want to take multiple subjects, type them here.</p>
+       
+        <br>
+        
+        <label for="id_sub" class="text-white">Subjects name:</label>
+        <input type="text" id="id_sub" name="sub">
+        
+        <br>
+        
+        <p class="text-white">What are you?</p>
+        <label for="id_role" class="text-white">Role:</label>
+        <select id="id_role" name="role">
+            <option value="teacher">Teacher</option>
+            <option value="student">Student</option>
+        </select>
+        
+        <br>
+        
+        <p class="text-white">If you are a teacher, upload your Aadhar card. If you are a student, upload your picture.</p>
+        <label for="id_profile_image" class="text-white">Upload Image:</label>
+        <input type="file" id="id_profile_image" name="profile_image" accept="image/*" required>
+        
+        <div id="error_message" style="color: red;"></div>
+        
+        <button type="submit" class="ml-2 px-4 py-2 bg-blue-500 text-white rounded-md">Register</button>
+<br>        
+        <button type="button" id="clearButton" class="ml-2 px-4 py-2 bg-blue-500 text-white rounded-md">Clear Form</button>
+        
+        <div id="error_message" style="color: red;"></div>
+    </form>
+
+</div>
+
+{% include 'footer.html' %}
+
+
+</body>
+</html>

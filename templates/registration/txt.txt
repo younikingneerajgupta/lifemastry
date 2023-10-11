@@ -1,0 +1,42 @@
+from django.shortcuts import render, redirect
+from .forms import UserProfileForm
+from docx import Document
+from django.http import HttpResponse
+from django.core.mail import send_mail
+import math, random
+def registration_view(request):
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST, request.FILES)  # Handle uploaded files
+        if form.is_valid():
+            form.save()
+
+            # Save data to a Word file
+            doc = Document()
+            user_profile = form.instance
+            doc.add_paragraph(f"Username: {user_profile.username}")
+            doc.add_paragraph(f"Email: {user_profile.email}")
+            doc.add_paragraph(f"Profile Image: {user_profile.profile_image}")
+            # Add more fields as needed
+            doc.save(f'user_profile_{user_profile.id}.docx')
+
+            return redirect('registration_success')
+    else:
+        form = UserProfileForm()
+
+    return render(request, 'registration/registration_form.html', {'form': form})
+
+def registration_success(request):
+    return render(request, 'registration/registration_success.html')
+def generateOTP() :
+     digits = "0123456789"
+     OTP = ""
+     for i in range(4) :
+         OTP += digits[math.floor(random.random() * 10)]
+     return OTP
+def send_otp(request):
+     email=request.GET.get   ("email")
+     print(email)
+     o=generateOTP()
+     htmlgen = '<p>Your OTP is <strong>o</strong></p>'
+     send_mail('OTP request',o,'<your gmail id>',[email], fail_silently=False, html_message=htmlgen)
+     return HttpResponse(o)
