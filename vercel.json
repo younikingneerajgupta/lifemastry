@@ -1,0 +1,14 @@
+{
+    "builds": [
+      {
+        "src": "lifemastry/wsgi.py",
+        "use": "@vercel/python"
+      }
+    ],
+    "routes": [
+      {
+        "src": "/(.*)",
+        "dest": "lifemastrye/wsgi.py"
+      }
+    ]
+}
