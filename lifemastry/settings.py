@@ -29,7 +29,8 @@ SECRET_KEY = 'django-insecure-1p6l%&fq%rsf-f)ib_o16_f1@2k!v&wbj$0x_63_3x%-7%b9=c
 DEBUG = True# Application definition
 
 ALLOWED_HOSTS = [
-    '*',
+    '.vercel.app',
+    '.now.sh',
     'localhost',
     '127.0.0.1',
     'a013-2405-201-4043-8045-f437-8507-742-cac3.ngrok-free.app',]
@@ -96,10 +97,10 @@ WSGI_APPLICATION = 'lifemastry.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    #'default': {
+        #'ENGINE': 'django.db.backends.sqlite3',
+        #'NAME': BASE_DIR / 'db.sqlite3',
+    #}
 }
 
 
